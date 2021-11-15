@@ -4,10 +4,25 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// Apollo
+import {
+  ApolloClient, InMemoryCache, ApolloProvider
+} from "@apollo/client";
+
+const client = new ApolloClient({
+  uri: 'https://maximum-crappie-64.hasura.app/v1/graphql',
+  cache: new InMemoryCache(),
+  headers: {
+    "x-hasura-admin-secret": "95XpeOrmpdFlkXKfIZEfahuQm2x1XH95EJx3o7wXcPXh6dNnB0jNybRPweNwr2He"
+  }
+});
+
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <ApolloProvider client={client}>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </ApolloProvider>,
   document.getElementById('root')
 );
 
