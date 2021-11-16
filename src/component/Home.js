@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import PassengerInput from './PassengerInput';
 import ListPassenger from './ListPassenger';
 import Header from './Header';
-import SearchPassenger from './SearchPassenger';
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, gql, useMutation } from "@apollo/client";
 import { ReactComponent as LoadingDualRing } from "../assets/loadingDualRing.svg";
 
 const GET_PASSENGERS = gql`
@@ -30,11 +29,11 @@ const GET_PASSENGERS_BY_ID = gql`
 
 const POST_PASSENGER = gql`
     mutation PostPassenger($name: String!, $age: Int!, $sex: String!){
-        insert_kampus_merdeka_passengers(objects: {name: $name, age: $age, sex: $sex}){
-            id
-            name
-            age
-            sex
+        insert_kampus_merdeka_passengers_one(object: {name: $name, age: $age, sex: $sex}){
+                id
+                name
+                age
+                sex
         }
     }
 `;
@@ -42,9 +41,14 @@ const POST_PASSENGER = gql`
 const Home = () => {
     const [id, setId] = useState('');
     const [list, setList] = useState([]);
-    const { loading, error, data, refetch } = useQuery(GET_PASSENGERS);
-    const { loading: loadingGetId, error: errorGetId, data: dataGetId, refetch: refetchGetId } = useQuery(GET_PASSENGERS_BY_ID, {
+    const { loading, error, data } = useQuery(GET_PASSENGERS, {
+        notifyOnNetworkStatusChange: true,
+    });
+    const { loading: loadingGetId, data: dataGetId } = useQuery(GET_PASSENGERS_BY_ID, {
         variables: { id }
+    });
+    const [postPassenger, { loading: loadingPost, error: errorPost }] = useMutation(POST_PASSENGER, {
+        refetchQueries: [{ query: GET_PASSENGERS }]
     });
 
     useEffect(() => {
@@ -56,19 +60,21 @@ const Home = () => {
         }
     }, [dataGetId, data]);
 
-
-    const handleSearch = (event) => {
-        event.preventDefault();
-        refetchGetId({ id });
-    }
-
-    const tambahPengunjung = () => { };
+    const tambahPengunjung = (newPassenger) => {
+        postPassenger({
+            variables: {
+                name: newPassenger.nama,
+                age: newPassenger.umur,
+                sex: newPassenger.jenisKelamin,
+            }
+        });
+    };
     const hapusPengunjung = () => { };
 
     return (
         <div>
             <Header />
-            <form className="form-inline my-2 my-lg-0" onSubmit={handleSearch}>
+            <form className="form-inline my-2 my-lg-0">
                 <div className="form-group">
                     <label htmlFor="id">Search by ID</label>
                     <br />
@@ -76,12 +82,11 @@ const Home = () => {
                         onChange={(e) => setId(e.target.value)}
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">Search</button>
             </form>
             <br />
-            {(loading || loadingGetId) ? (
+            {(loading || loadingGetId || loadingPost) ? (
                 <LoadingDualRing />
-            ) : error ?
+            ) : (error || errorPost) ?
                 (<p>{error}</p>) :
                 (<>
                     <ListPassenger
