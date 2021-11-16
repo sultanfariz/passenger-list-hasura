@@ -61,6 +61,13 @@ const Home = () => {
                 sex: data.jenisKelamin
             }
         });
+        setUpdatedPengunjung({
+            id: '',
+            nama: '',
+            umur: '',
+            jenis_kelamin: 'Pria',
+            editing: false,
+        });
     }
     const hapusPengunjung = (id) => {
         deletePassenger({ variables: { id } });

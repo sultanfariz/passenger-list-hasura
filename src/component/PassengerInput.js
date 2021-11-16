@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import "./Home.css"
 
-function PassengerInput({ tambahPengunjung, editPengunjung, deletePengunjung, data }) {
+function PassengerInput({ tambahPengunjung, editPengunjung, data }) {
   const [editing, setEditing] = useState(false);
   const [state, setState] = useState({
     nama: "",
@@ -11,7 +11,7 @@ function PassengerInput({ tambahPengunjung, editPengunjung, deletePengunjung, da
   })
 
   useEffect(() => {
-    if (data) {
+    if (data && data.editing) {
       setState({
         nama: data.nama,
         umur: data.umur,
