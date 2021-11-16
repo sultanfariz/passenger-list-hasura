@@ -2,63 +2,9 @@ import { useEffect, useState } from 'react';
 import PassengerInput from './PassengerInput';
 import ListPassenger from './ListPassenger';
 import Header from './Header';
-import { useQuery, gql, useMutation } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { ReactComponent as LoadingDualRing } from "../assets/loadingDualRing.svg";
-
-const GET_PASSENGERS = gql`
-    query GetPassengers {
-        kampus_merdeka_passengers {
-            id
-            name
-            age
-            sex
-        }
-    }
-`;
-
-const GET_PASSENGERS_BY_ID = gql`
-    query GetPassengers($id: Int!) {
-        kampus_merdeka_passengers(where: { id: { _eq: $id } }) {
-            id
-            name
-            age
-            sex
-        }
-    }
-`;
-
-const POST_PASSENGER = gql`
-    mutation PostPassenger($name: String!, $age: Int!, $sex: String!){
-        insert_kampus_merdeka_passengers_one(object: {name: $name, age: $age, sex: $sex}){
-                id
-                name
-                age
-                sex
-        }
-    }
-`;
-
-const UPDATE_PASSENGER = gql`
-    mutation UpdatePassenger($id: Int!, $name: String!, $age: Int!, $sex: String!){
-        update_kampus_merdeka_passengers_by_pk(pk_columns: { id: $id }, _set: { name: $name, age: $age, sex: $sex }){
-            id
-            name
-            age
-            sex
-        }
-    }
-`;
-
-const DELETE_PASSENGER = gql`
-    mutation DeletePassenger($id: Int!){
-        delete_kampus_merdeka_passengers_by_pk(id: $id) {
-            id
-            name
-            age
-            sex
-        }
-    }
-`;
+import { GET_PASSENGERS, GET_PASSENGERS_BY_ID, POST_PASSENGER, UPDATE_PASSENGER, DELETE_PASSENGER } from '../query/GraphQL';
 
 const Home = () => {
     const [id, setId] = useState('');
