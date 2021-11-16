@@ -49,6 +49,17 @@ const UPDATE_PASSENGER = gql`
     }
 `;
 
+const DELETE_PASSENGER = gql`
+    mutation DeletePassenger($id: Int!){
+        delete_kampus_merdeka_passengers_by_pk(id: $id) {
+            id
+            name
+            age
+            sex
+        }
+    }
+`;
+
 const Home = () => {
     const [id, setId] = useState('');
     const [list, setList] = useState([]);
@@ -59,6 +70,7 @@ const Home = () => {
         jenis_kelamin: 'Pria',
         editing: false,
     });
+
     const { loading, error, data } = useQuery(GET_PASSENGERS, {
         notifyOnNetworkStatusChange: true,
     });
@@ -69,6 +81,9 @@ const Home = () => {
         refetchQueries: [{ query: GET_PASSENGERS }]
     });
     const [updatePassenger, { loading: loadingUpdate, error: errorUpdate }] = useMutation(UPDATE_PASSENGER, {
+        refetchQueries: [{ query: GET_PASSENGERS }]
+    });
+    const [deletePassenger, { loading: loadingDelete, error: errorDelete }] = useMutation(DELETE_PASSENGER, {
         refetchQueries: [{ query: GET_PASSENGERS }]
     });
 
@@ -101,7 +116,9 @@ const Home = () => {
             }
         });
     }
-    const hapusPengunjung = () => { };
+    const hapusPengunjung = (id) => {
+        deletePassenger({ variables: { id } });
+    };
 
     const handleEditPengunjung = (id, data) => {
         setUpdatedPengunjung({
@@ -126,9 +143,9 @@ const Home = () => {
                 </div>
             </form>
             <br />
-            {(loading || loadingGetId || loadingPost || loadingUpdate) ? (
+            {(loading || loadingGetId || loadingPost || loadingUpdate || loadingDelete) ? (
                 <LoadingDualRing />
-            ) : (error || errorPost || errorUpdate) ?
+            ) : (error || errorPost || errorUpdate || errorDelete) ?
                 (<p>{error}</p>) :
                 (<>
                     <ListPassenger
