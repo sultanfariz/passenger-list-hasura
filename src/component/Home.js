@@ -38,9 +38,27 @@ const POST_PASSENGER = gql`
     }
 `;
 
+const UPDATE_PASSENGER = gql`
+    mutation UpdatePassenger($id: Int!, $name: String!, $age: Int!, $sex: String!){
+        update_kampus_merdeka_passengers_by_pk(pk_columns: { id: $id }, _set: { name: $name, age: $age, sex: $sex }){
+            id
+            name
+            age
+            sex
+        }
+    }
+`;
+
 const Home = () => {
     const [id, setId] = useState('');
     const [list, setList] = useState([]);
+    const [updatedPengunjung, setUpdatedPengunjung] = useState({
+        id: '',
+        nama: '',
+        umur: '',
+        jenis_kelamin: 'Pria',
+        editing: false,
+    });
     const { loading, error, data } = useQuery(GET_PASSENGERS, {
         notifyOnNetworkStatusChange: true,
     });
@@ -48,6 +66,9 @@ const Home = () => {
         variables: { id }
     });
     const [postPassenger, { loading: loadingPost, error: errorPost }] = useMutation(POST_PASSENGER, {
+        refetchQueries: [{ query: GET_PASSENGERS }]
+    });
+    const [updatePassenger, { loading: loadingUpdate, error: errorUpdate }] = useMutation(UPDATE_PASSENGER, {
         refetchQueries: [{ query: GET_PASSENGERS }]
     });
 
@@ -69,7 +90,28 @@ const Home = () => {
             }
         });
     };
+
+    const editPengunjung = (id, data) => {
+        updatePassenger({
+            variables: {
+                id,
+                name: data.nama,
+                age: data.umur,
+                sex: data.jenisKelamin
+            }
+        });
+    }
     const hapusPengunjung = () => { };
+
+    const handleEditPengunjung = (id, data) => {
+        setUpdatedPengunjung({
+            id,
+            nama: data.nama,
+            umur: data.umur,
+            jenisKelamin: data.jenisKelamin,
+            editing: data.editing
+        });
+    }
 
     return (
         <div>
@@ -84,9 +126,9 @@ const Home = () => {
                 </div>
             </form>
             <br />
-            {(loading || loadingGetId || loadingPost) ? (
+            {(loading || loadingGetId || loadingPost || loadingUpdate) ? (
                 <LoadingDualRing />
-            ) : (error || errorPost) ?
+            ) : (error || errorPost || errorUpdate) ?
                 (<p>{error}</p>) :
                 (<>
                     <ListPassenger
@@ -98,10 +140,13 @@ const Home = () => {
                                 jenisKelamin: sex
                             };
                         })}
+                        editPengunjung={handleEditPengunjung}
                         hapusPengunjung={hapusPengunjung}
                     />
                     <PassengerInput
                         tambahPengunjung={tambahPengunjung}
+                        editPengunjung={editPengunjung}
+                        data={updatedPengunjung}
                     /></>)
             }
         </div>

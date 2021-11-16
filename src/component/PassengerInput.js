@@ -1,13 +1,26 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import "./Home.css"
 
-function PassengerInput(props) {
+function PassengerInput({ tambahPengunjung, editPengunjung, deletePengunjung, data }) {
+  const [editing, setEditing] = useState(false);
   const [state, setState] = useState({
     nama: "",
     umur: "",
     jenisKelamin: "Pria",
     editing: true,
   })
+
+  useEffect(() => {
+    if (data) {
+      setState({
+        nama: data.nama,
+        umur: data.umur,
+        jenisKelamin: data.jenisKelamin,
+        editing: !data.editing,
+      })
+      setEditing(data.editing);
+    }
+  }, [data])
 
   const onChange = (e) => {
     setState({
@@ -27,7 +40,7 @@ function PassengerInput(props) {
           umur: state.umur,
           jenisKelamin: state.jenisKelamin,
         }
-        props.tambahPengunjung(newData)
+        editing ? editPengunjung(data.id, newData) : tambahPengunjung(newData);
         setState({
           ...state,
           nama: "",
@@ -48,11 +61,21 @@ function PassengerInput(props) {
   }
 
   const handleTutupInput = () => {
-    setState({
-      ...state,
-      editing: true,
-    })
+    if (!editing)
+      setState({
+        ...state,
+        editing: true,
+      })
+    else
+      setState({
+        nama: "",
+        umur: "",
+        jenisKelamin: "Pria",
+        editing: true,
+      })
+    setEditing(false);
   }
+
 
   let viewMode = {}
   let editMode = {}
@@ -72,10 +95,8 @@ function PassengerInput(props) {
         <input type="number" className="input-text" placeholder="Umur anda ..." value={state.umur} name="umur" onChange={onChange} />
         <p>Masukkan Jenis Kelamin Anda</p>
         <select onChange={onChange} name="jenisKelamin">
-          <option value="Pria" selected>
-            Pria
-          </option>
-          <option value="Wanita">Wanita</option>
+          <option value="Pria" selected={state.jenisKelamin === "Pria"}>Pria</option>
+          <option value="Wanita" selected={state.jenisKelamin === "Wanita"}>Wanita</option>
         </select>
         <p></p>
         <button onClick={handleSubmit}>Submit</button>
