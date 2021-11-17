@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import PassengerInput from './PassengerInput';
 import ListPassenger from './ListPassenger';
 import Header from './Header';
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation, useSubscription } from "@apollo/client";
 import { ReactComponent as LoadingDualRing } from "../assets/loadingDualRing.svg";
-import { GET_PASSENGERS, GET_PASSENGERS_BY_ID, POST_PASSENGER, UPDATE_PASSENGER, DELETE_PASSENGER } from '../GraphQL/query';
+import { GET_PASSENGERS_REALTIME, GET_PASSENGERS_BY_ID, POST_PASSENGER, UPDATE_PASSENGER, DELETE_PASSENGER } from '../GraphQL/query';
 
 const Home = () => {
     const [id, setId] = useState('');
@@ -17,21 +17,27 @@ const Home = () => {
         editing: false,
     });
 
-    const { loading, error, data } = useQuery(GET_PASSENGERS, {
+    // const { loading, error, data } = useQuery(GET_PASSENGERS, {
+    //     notifyOnNetworkStatusChange: true,
+    // });
+    const { loading, error, data } = useSubscription(GET_PASSENGERS_REALTIME, {
         notifyOnNetworkStatusChange: true,
     });
     const { loading: loadingGetId, data: dataGetId } = useQuery(GET_PASSENGERS_BY_ID, {
         variables: { id }
     });
-    const [postPassenger, { loading: loadingPost, error: errorPost }] = useMutation(POST_PASSENGER, {
-        refetchQueries: [{ query: GET_PASSENGERS }]
-    });
-    const [updatePassenger, { loading: loadingUpdate, error: errorUpdate }] = useMutation(UPDATE_PASSENGER, {
-        refetchQueries: [{ query: GET_PASSENGERS }]
-    });
-    const [deletePassenger, { loading: loadingDelete, error: errorDelete }] = useMutation(DELETE_PASSENGER, {
-        refetchQueries: [{ query: GET_PASSENGERS }]
-    });
+    const [postPassenger, { loading: loadingPost, error: errorPost }] = useMutation(POST_PASSENGER);
+    const [updatePassenger, { loading: loadingUpdate, error: errorUpdate }] = useMutation(UPDATE_PASSENGER);
+    const [deletePassenger, { loading: loadingDelete, error: errorDelete }] = useMutation(DELETE_PASSENGER);
+    // const [postPassenger, { loading: loadingPost, error: errorPost }] = useMutation(POST_PASSENGER, {
+    //     refetchQueries: [{ query: GET_PASSENGERS }]
+    // });
+    // const [updatePassenger, { loading: loadingUpdate, error: errorUpdate }] = useMutation(UPDATE_PASSENGER, {
+    //     refetchQueries: [{ query: GET_PASSENGERS }]
+    // });
+    // const [deletePassenger, { loading: loadingDelete, error: errorDelete }] = useMutation(DELETE_PASSENGER, {
+    //     refetchQueries: [{ query: GET_PASSENGERS }]
+    // });
 
     useEffect(() => {
         if (data) {

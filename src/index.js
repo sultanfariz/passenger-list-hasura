@@ -13,16 +13,21 @@ import { split, HttpLink } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 
 const httpLink = new HttpLink({
-  uri: 'http://maximum-crappie-64.hasura.app/v1/graphql',
+  uri: 'https://maximum-crappie-64.hasura.app/v1/graphql',
   headers: {
     "x-hasura-admin-secret": "95XpeOrmpdFlkXKfIZEfahuQm2x1XH95EJx3o7wXcPXh6dNnB0jNybRPweNwr2He"
   }
 });
 
 const wsLink = new WebSocketLink({
-  uri: 'ws://maximum-crappie-64.hasura.app/v1/graphql',
+  uri: 'wss://maximum-crappie-64.hasura.app/v1/graphql',
   options: {
-    reconnect: true
+    reconnect: true,
+    connectionParams: {
+      headers: {
+        "x-hasura-admin-secret": "95XpeOrmpdFlkXKfIZEfahuQm2x1XH95EJx3o7wXcPXh6dNnB0jNybRPweNwr2He"
+      }
+    }
   }
 });
 
@@ -38,17 +43,17 @@ const splitLink = split(
   httpLink,
 );
 
-const client = new ApolloClient({
-  uri: 'https://maximum-crappie-64.hasura.app/v1/graphql',
-  cache: new InMemoryCache(),
-  headers: {
-    "x-hasura-admin-secret": "95XpeOrmpdFlkXKfIZEfahuQm2x1XH95EJx3o7wXcPXh6dNnB0jNybRPweNwr2He"
-  }
-});
 // const client = new ApolloClient({
-//   link: splitLink,
+//   uri: 'https://maximum-crappie-64.hasura.app/v1/graphql',
 //   cache: new InMemoryCache(),
+//   headers: {
+//     "x-hasura-admin-secret": "95XpeOrmpdFlkXKfIZEfahuQm2x1XH95EJx3o7wXcPXh6dNnB0jNybRPweNwr2He"
+//   }
 // });
+const client = new ApolloClient({
+  link: splitLink,
+  cache: new InMemoryCache(),
+});
 
 ReactDOM.render(
   <ApolloProvider client={client}>

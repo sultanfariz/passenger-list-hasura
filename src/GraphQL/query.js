@@ -4,10 +4,23 @@ export const GET_PASSENGERS = gql`
     query GetPassengers {
         kampus_merdeka_passengers_aggregate(order_by: {id: asc}) {
             nodes {
-            id
-            name
-            age
-            sex
+                id
+                name
+                age
+                sex
+            }
+        }
+    }
+`;
+
+export const GET_PASSENGERS_REALTIME = gql`
+    subscription GetPassengers {
+        kampus_merdeka_passengers_aggregate(order_by: {id: asc}) {
+            nodes {
+                id
+                name
+                age
+                sex
             }
         }
     }
