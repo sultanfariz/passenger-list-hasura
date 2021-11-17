@@ -2,11 +2,13 @@ import { gql } from "@apollo/client";
 
 export const GET_PASSENGERS = gql`
     query GetPassengers {
-        kampus_merdeka_passengers {
+        kampus_merdeka_passengers_aggregate(order_by: {id: asc}) {
+            nodes {
             id
             name
             age
             sex
+            }
         }
     }
 `;

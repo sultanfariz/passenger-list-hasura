@@ -4,7 +4,7 @@ import ListPassenger from './ListPassenger';
 import Header from './Header';
 import { useQuery, useMutation } from "@apollo/client";
 import { ReactComponent as LoadingDualRing } from "../assets/loadingDualRing.svg";
-import { GET_PASSENGERS, GET_PASSENGERS_BY_ID, POST_PASSENGER, UPDATE_PASSENGER, DELETE_PASSENGER } from '../query/GraphQL';
+import { GET_PASSENGERS, GET_PASSENGERS_BY_ID, POST_PASSENGER, UPDATE_PASSENGER, DELETE_PASSENGER } from '../GraphQL/query';
 
 const Home = () => {
     const [id, setId] = useState('');
@@ -35,7 +35,8 @@ const Home = () => {
 
     useEffect(() => {
         if (data) {
-            setList(data.kampus_merdeka_passengers);
+            // setList(data.kampus_merdeka_passengers);
+            setList(data.kampus_merdeka_passengers_aggregate.nodes);
         }
         if (dataGetId) {
             setList(dataGetId.kampus_merdeka_passengers);
