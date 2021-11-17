@@ -34,13 +34,6 @@ const splitLink = split(
     httpLink,
 );
 
-// const client = new ApolloClient({
-//   uri: 'https://maximum-crappie-64.hasura.app/v1/graphql',
-//   cache: new InMemoryCache(),
-//   headers: {
-//     "x-hasura-admin-secret": "95XpeOrmpdFlkXKfIZEfahuQm2x1XH95EJx3o7wXcPXh6dNnB0jNybRPweNwr2He"
-//   }
-// });
 const client = new ApolloClient({
     link: splitLink,
     cache: new InMemoryCache(),

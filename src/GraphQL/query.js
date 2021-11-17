@@ -37,6 +37,17 @@ export const GET_PASSENGERS_BY_ID = gql`
     }
 `;
 
+export const GET_PASSENGERS_BY_ID_REALTIME = gql`
+    subscription GetPassengers($id: Int!) {
+        kampus_merdeka_passengers(where: { id: { _eq: $id } }) {
+            id
+            name
+            age
+            sex
+        }
+    }
+`;
+
 export const POST_PASSENGER = gql`
     mutation PostPassenger($name: String!, $age: Int!, $sex: String!){
         insert_kampus_merdeka_passengers_one(object: {name: $name, age: $age, sex: $sex}){
